@@ -1,0 +1,5 @@
+/env_*
+.env
+/test_files
+/docs_to_print/**
+/__**

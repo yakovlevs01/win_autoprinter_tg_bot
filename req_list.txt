@@ -1,0 +1,5 @@
+pytelegrambotapi
+python-dotenv
+fpdf2
+PyMuPDF
+pywin32
