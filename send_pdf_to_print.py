@@ -7,20 +7,19 @@ def send_to_print(
     mode: int = 1,
     printer_name: str = win32print.GetDefaultPrinter(),  # Brother DCP-L2560DW series
 ):
-    """Sends pdf file to printer
+    """Sends pdf file to printer.
 
     Args:
+        pdf_file_path: string-path to file to print
 
-        `pdf_file_path`: string-path to file to print
-
-        `mode`: int - one of following values: 1, 2 or 3.
+        mode: int - one of following values: 1, 2 or 3.
                 1 is single-sided printing (default)
 
                 2 is double-sided printing with flipping on long edge (booklet layout)
 
                 3 is double-sided printing with flipping on short edge (tablet layout)
 
-        `printer_name`: string-name of desired printer. Defaults to OS default printer.
+        printer_name: string-name of desired printer. Defaults to OS default printer.
 
     """
     print(f"Sending pdf to {printer_name}")

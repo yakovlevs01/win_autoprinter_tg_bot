@@ -93,7 +93,7 @@ def callback_for_pps(call):
         message_id=call.message.message_id,
     )
     if call.data == "1pps":
-        print("1pps, делать ничего не надо")
+        print("1pps, nothing to do")
     else:
         path_to_pdf_file = create_pdf(
             path_to_pdf_file, pages_per_sheet=int(call.data[0])

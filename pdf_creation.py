@@ -28,76 +28,6 @@ HALF_A4_WIDTH = 105
 HALF_A4_HEIGHT = 148.5
 
 
-def create_pdf_with_2pps(path_to_orgnl_pdf: str):
-    """
-    DEPRECATED
-
-    Creates new pdf file with 2 pages per sheet in tablet (horizontal) layout.
-
-    Saves it to the same folder but adds "2pps_" at the beggining of filename
-
-    Args:
-
-        `path_to_orgnl_pdf`: string-path to file used as source of new file
-
-    """
-    orgnl_pdf_doc = fitz.open(path_to_orgnl_pdf)
-
-    result_file_path = add_prefix_to_filename("2pps_", path_to_orgnl_pdf)
-    pdf_file_land_2pps = FPDF(orientation="L", unit="mm", format="A4")
-
-    for i in range(0, len(orgnl_pdf_doc), 2):
-        pdf_file_land_2pps.add_page()
-        for j in range(2):
-            page_idx = i + j
-            if page_idx < len(orgnl_pdf_doc):
-                img = pixmap_to_image(orgnl_pdf_doc.load_page(page_idx).get_pixmap())
-                buffer = BytesIO()
-                img.save(buffer, format="PNG")
-                buffer.seek(0)
-                x_offset = j * HALF_A4_HEIGHT
-                y_offset = 0
-                pdf_file_land_2pps.image(
-                    buffer, x=x_offset, y=y_offset, w=HALF_A4_HEIGHT, h=A4_WIDTH
-                )
-    pdf_file_land_2pps.output(result_file_path)
-
-
-def create_pdf_with_4pps(path_to_orgnl_pdf: str):
-    """
-    DEPRECATED
-
-    Creates new pdf file with 4 pages per sheet in booklet (vertical) layout.
-
-    Saves it to the same folder but adds "4pps_" at the beggining of filename
-
-    Args:
-
-        `path_to_orgnl_pdf`: string-path to file used as source of new file
-
-    """
-    orgnl_pdf_doc = fitz.open(path_to_orgnl_pdf)
-
-    result_file_path = add_prefix_to_filename("4pps_", path_to_orgnl_pdf)
-    pdf_file_4pps = FPDF()
-
-    for i in range(0, len(orgnl_pdf_doc), 4):
-        pdf_file_4pps.add_page()
-        for j in range(4):
-            page_idx = i + j
-            if page_idx < len(orgnl_pdf_doc):
-                img = pixmap_to_image(orgnl_pdf_doc.load_page(page_idx).get_pixmap())
-                buffer = BytesIO()
-                img.save(buffer, format="PNG")
-                buffer.seek(0)
-                x_offset = (j % 2) * HALF_A4_WIDTH
-                y_offset = (j // 2) * HALF_A4_HEIGHT
-                pdf_file_4pps.image(
-                    buffer, x=x_offset, y=y_offset, w=HALF_A4_WIDTH, h=HALF_A4_HEIGHT
-                )
-    pdf_file_4pps.output(result_file_path)
-
-
 def create_pdf(path_to_orgnl_pdf: str, pages_per_sheet: int):
     orgnl_pdf_doc = fitz.open(path_to_orgnl_pdf)
 
@@ -111,10 +41,7 @@ def create_pdf(path_to_orgnl_pdf: str, pages_per_sheet: int):
     nvertical = pages_per_sheet // 2
     nhorizontal = pages_per_sheet // nvertical
 
-    if pages_per_sheet == 2:
-        new_pdf = FPDF(orientation="L")
-    else:
-        new_pdf = FPDF()
+    new_pdf = FPDF(orientation="L") if pages_per_sheet == 2 else FPDF()
 
     for i in range(0, len(orgnl_pdf_doc), pages_per_sheet):
         new_pdf.add_page()
