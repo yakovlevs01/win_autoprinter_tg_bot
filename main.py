@@ -10,6 +10,7 @@ load_dotenv()
 TG_BOT_TOKEN = os.getenv("TG_TOKEN")
 MY_TELEGRAM_ID = int(os.getenv("MY_TELEGRAM_ID"))
 WIFE_TELEGRAM_ID = int(os.getenv("WIFE_TELEGRAM_ID"))
+default_printer_name = os.getenv("DEFAULT_PRINTER")
 
 allowed_users = (MY_TELEGRAM_ID, WIFE_TELEGRAM_ID)
 
@@ -117,9 +118,7 @@ def callback_of_print_mode(call):
         message_id=call.message.message_id,
     )
     print_mode = int(call.data[-1])
-    send_to_print(
-        path_to_pdf_file, mode=print_mode, printer_name="Brother DCP-L2560DW series"
-    )
+    send_to_print(path_to_pdf_file, mode=print_mode, printer_name=default_printer_name)
 
 
 bot.infinity_polling()
