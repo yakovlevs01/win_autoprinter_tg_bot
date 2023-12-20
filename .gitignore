@@ -3,3 +3,4 @@
 /test_files
 /docs_to_print/**
 /__**
+.ruff_cache

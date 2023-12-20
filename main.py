@@ -1,13 +1,15 @@
-import telebot
 import os
+
+import telebot
 from dotenv import load_dotenv
-from send_pdf_to_print import send_to_print
+
 from pdf_creation import create_pdf
+from send_pdf_to_print import send_to_print
 
 load_dotenv()
-TG_BOT_TOKEN = os.getenv("tg_token")
-MY_TELEGRAM_ID = int(os.getenv("my_telegram_id"))
-WIFE_TELEGRAM_ID = int(os.getenv("wife_telegram_id"))
+TG_BOT_TOKEN = os.getenv("TG_TOKEN")
+MY_TELEGRAM_ID = int(os.getenv("MY_TELEGRAM_ID"))
+WIFE_TELEGRAM_ID = int(os.getenv("WIFE_TELEGRAM_ID"))
 
 allowed_users = (MY_TELEGRAM_ID, WIFE_TELEGRAM_ID)
 
