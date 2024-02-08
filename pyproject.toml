@@ -1,0 +1,9 @@
+[tool.ruff]
+fix = true
+#unsafe-fixes = true
+line-length = 120
+extend-include = ["*.ipynb"]
+select = ["ALL"]
+ignore = ["EM", "FBT", "TRY003", "S101", "D1", "FA", "ANN101"]
+pydocstyle.convention = "google"
+
