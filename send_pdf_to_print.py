@@ -1,8 +1,10 @@
+import subprocess
+
 import win32api
 import win32print
 
 
-def send_to_print(
+def deprecated_send_to_print(
     pdf_file_path: str,
     mode: int = 1,
     printer_name: str = win32print.GetDefaultPrinter(),  # Brother DCP-L2560DW series
@@ -35,6 +37,34 @@ def send_to_print(
     win32api.ShellExecute(0, "print", pdf_file_path, None, ".", 0)
 
     win32print.ClosePrinter(printer_handle)
+
+
+def send_to_print(pdf_file_path: str, mode: str = "simplex") -> None:
+    """Sends pdf file to printer.
+
+    Args:
+        pdf_file_path: string-path to file to print
+
+        mode: str - one of following values: simplex, duplexlong or duplexshort.
+                simplex is single-sided printing (default)
+
+                duplexlong is double-sided printing with flipping on long edge (booklet layout)
+
+                duplexshort is double-sided printing with flipping on short edge (tablet layout)
+    """
+    assert mode in ("simplex", "duplex", "duplexshort", "duplexlong")
+    print(f"Sending {pdf_file_path} with {mode} mode to default printer")
+    sumatra = '"C:/Program Files/SumatraPDF/SumatraPDF.exe"'
+
+    print(
+        subprocess.run(
+            f'{sumatra} -print-to-default -silent -print-settings "{mode}" "{pdf_file_path}"',
+            shell=True,
+            text=True,
+            capture_output=True,
+        )
+    )
+    # print(subprocess.call([sumatra, "-print-to-default", "-silent", f'-print-settings "{mode}"', pdf_file_path]))
 
 
 if __name__ == "__main__":

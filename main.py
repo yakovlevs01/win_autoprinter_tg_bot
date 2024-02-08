@@ -10,7 +10,7 @@ load_dotenv()
 TG_BOT_TOKEN = os.getenv("TG_TOKEN")
 MY_TELEGRAM_ID = int(os.getenv("MY_TELEGRAM_ID"))
 WIFE_TELEGRAM_ID = int(os.getenv("WIFE_TELEGRAM_ID"))
-default_printer_name = os.getenv("DEFAULT_PRINTER")
+# default_printer_name = os.getenv("DEFAULT_PRINTER")
 
 allowed_users = (MY_TELEGRAM_ID, WIFE_TELEGRAM_ID)
 
@@ -26,8 +26,8 @@ def pages_per_sheet_keyboard():
                 telebot.types.InlineKeyboardButton(text="1", callback_data="1pps"),
                 telebot.types.InlineKeyboardButton(text="2", callback_data="2pps"),
                 telebot.types.InlineKeyboardButton(text="4", callback_data="4pps"),
-            ]
-        ]
+            ],
+        ],
     )
 
 
@@ -35,21 +35,9 @@ def print_mode_keyboard():
     return telebot.types.InlineKeyboardMarkup(
         row_width=1,
         keyboard=[
-            [
-                telebot.types.InlineKeyboardButton(
-                    text="Односторонняя", callback_data="mode_1"
-                )
-            ],
-            [
-                telebot.types.InlineKeyboardButton(
-                    text="Двусторонняя по длинному краю", callback_data="mode_2"
-                )
-            ],
-            [
-                telebot.types.InlineKeyboardButton(
-                    text="Двусторонняя по короткому краю", callback_data="mode_3"
-                )
-            ],
+            [telebot.types.InlineKeyboardButton(text="Односторонняя", callback_data="simplex")],
+            [telebot.types.InlineKeyboardButton(text="Двусторонняя по длинному краю", callback_data="duplexlong")],
+            [telebot.types.InlineKeyboardButton(text="Двусторонняя по короткому краю", callback_data="duplexshort")],
         ],
     )
 
@@ -63,9 +51,7 @@ def print_user_id(message):
 @bot.message_handler(func=lambda msg: msg.from_user.id in allowed_users)
 def save_file(message):
     global path_to_pdf_file
-    downloaded_file = bot.download_file(
-        bot.get_file(message.document.file_id).file_path
-    )
+    downloaded_file = bot.download_file(bot.get_file(message.document.file_id).file_path)
     path_to_pdf_file = ".\\docs_to_print\\" + message.document.file_name
 
     with open(path_to_pdf_file, "wb") as new_file:
@@ -73,12 +59,8 @@ def save_file(message):
 
     print(f"Downloaded the file {path_to_pdf_file}")
 
-    bot.reply_to(
-        message, "Сколько страниц на листе?", reply_markup=pages_per_sheet_keyboard()
-    )
-    bot.send_message(
-        message.chat.id, "Какая печать?", reply_markup=print_mode_keyboard()
-    )
+    bot.reply_to(message, "Сколько страниц на листе?", reply_markup=pages_per_sheet_keyboard())
+    bot.send_message(message.chat.id, "Какая печать?", reply_markup=print_mode_keyboard())
 
 
 @bot.callback_query_handler(func=lambda call: call.data in {"1pps", "2pps", "4pps"})
@@ -87,9 +69,7 @@ def callback_for_pps(call):
 
     print(f"User asked for {call.data[0]} pages per sheet")
 
-    bot.edit_message_reply_markup(
-        call.message.chat.id, call.message.message_id, reply_markup=None
-    )
+    bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=None)
     bot.edit_message_text(
         text=call.message.text + f"\n{call.data[0]}",
         chat_id=call.message.chat.id,
@@ -98,27 +78,21 @@ def callback_for_pps(call):
     if call.data == "1pps":
         print("1pps, nothing to do")
     else:
-        path_to_pdf_file = create_pdf(
-            path_to_pdf_file, pages_per_sheet=int(call.data[0])
-        )
+        path_to_pdf_file = create_pdf(path_to_pdf_file, pages_per_sheet=int(call.data[0]))
 
 
-@bot.callback_query_handler(
-    func=lambda call: call.data in {"mode_1", "mode_2", "mode_3"}
-)
+@bot.callback_query_handler(func=lambda call: call.data in {"simplex", "duplexlong", "duplexshort"})
 def callback_of_print_mode(call):
     print(f"User asked for {call.data}")
 
-    bot.edit_message_reply_markup(
-        call.message.chat.id, call.message.message_id, reply_markup=None
-    )
+    bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=None)
     bot.edit_message_text(
         text=call.message.text + f"\n{call.data}",
         chat_id=call.message.chat.id,
         message_id=call.message.message_id,
     )
-    print_mode = int(call.data[-1])
-    send_to_print(path_to_pdf_file, mode=print_mode, printer_name=default_printer_name)
+    print_mode = str(call.data)
+    send_to_print(path_to_pdf_file, mode=print_mode)
 
 
 bot.infinity_polling()

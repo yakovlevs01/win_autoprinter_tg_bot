@@ -1,13 +1,13 @@
+from io import BytesIO
+
 import fitz
 from fpdf import FPDF
 from PIL import Image
-from io import BytesIO
 
 
 def pixmap_to_image(pixmap):
     img_data = pixmap.samples
-    img = Image.frombytes("RGB", [pixmap.width, pixmap.height], img_data)
-    return img
+    return Image.frombytes("RGB", [pixmap.width, pixmap.height], img_data)
 
 
 def get_folder_path(full_file_path: str) -> str:
@@ -28,15 +28,12 @@ HALF_A4_WIDTH = 105
 HALF_A4_HEIGHT = 148.5
 
 
-def create_pdf(path_to_orgnl_pdf: str, pages_per_sheet: int):
+def create_pdf(path_to_orgnl_pdf: str, pages_per_sheet: int) -> None:
     orgnl_pdf_doc = fitz.open(path_to_orgnl_pdf)
 
-    result_file_path = add_prefix_to_filename(
-        f"{pages_per_sheet}pps_", path_to_orgnl_pdf
-    )
+    result_file_path = add_prefix_to_filename(f"{pages_per_sheet}pps_", path_to_orgnl_pdf)
 
-    if pages_per_sheet not in {2, 4}:
-        raise ValueError("pages_per_sheet must be 2 or 4")
+    assert pages_per_sheet in {2, 4}
 
     nvertical = pages_per_sheet // 2
     nhorizontal = pages_per_sheet // nvertical
